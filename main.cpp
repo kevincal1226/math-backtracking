@@ -6,6 +6,24 @@ bool backtrack(std::vector<int> &nums, std::vector<char> &operations, int target
     if (index == nums.size()) {
         return target == current;
     }
+    operations.emplace_back('+');
+    if (backtrack(nums, operations, target, current + nums[index], index + 1)) {
+        return true;
+    };
+    operations.back() = '-';
+    if (backtrack(nums, operations, target, current - nums[index], index + 1)) {
+        return true;
+    };
+    operations.back() = '*';
+    if (backtrack(nums, operations, target, current * nums[index], index + 1)) {
+        return true;
+    };
+    operations.back() = '/';
+    if (nums[index] != 0 && current % nums[index] == 0 &&
+        backtrack(nums, operations, target, current / nums[index], index + 1)) {
+        return true;
+    };
+    operations.pop_back();
     return false;
 }
 
@@ -25,5 +43,10 @@ int main() {
         std::cout << "No possible permutation could be found to create target value " << target << ".\n";
         return 0;
     }
+    std::cout << "Found answer: ";
+    for (size_t i = 0; i < operations.size(); ++i) {
+        std::cout << nums[i] << ' ' << operations[i] << ' ';
+    }
+    std::cout << nums.back() << " = " << target << '\n';
     return 0;
 }
